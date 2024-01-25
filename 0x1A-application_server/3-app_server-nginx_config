@@ -1,0 +1,38 @@
+server {
+    listen 80 default_server;
+    listen [::]:80 ipv6only=on default_server;
+    listen [::]:80 default_server;
+
+    # Use IP of server as domain name
+    server_name 100.26.56.29
+
+    location /hbnb_static/ {
+                alias /data/web_static/current/;
+                autoindex off;
+    }
+
+    index index.html index.htm index.nginx-debian.html;
+        rewrite ^/redirect_me https://github.com/RSstanley permanent;
+
+        error_page 404 /404.html;
+
+    # Customize HTTP response header
+    add-header X-Served-By 288656-web-01;
+
+    # Serve /airbnb-onepage/ route on AirBnB_clone_v2
+    location = /airbnb-onepage/ {
+        proxy_pass http://127.0.0.1:5000/airbnb-onepage/;
+    }
+
+    # serve /number_odd_or_even/ route on AirBnB_clone_v2
+    location ~ /airbnb-dynamic/number_odd_or_even/(\d+)$ {
+        proxy_pass http://127.0.0.1:5001/number_odd_or_even/$1;
+    }
+
+     error_page 404 /404.html;
+    location /404 {
+      root /var/www/html;
+      internal;
+    }
+}
+ 
